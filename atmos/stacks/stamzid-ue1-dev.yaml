@@ -1,0 +1,30 @@
+vars:
+  namespace: stamzid
+  tenant: stamzid
+  environment: ue1
+  stage: dev
+  profile: stamzid
+  region: us-east-1
+
+components:
+  terraform:
+    vpc:
+      vars:
+        cidr_block: "10.17.0.0/22"
+        subnets_cidr_blocks:
+          - public:
+              - 10.17.0.0/24
+              - 10.17.1.0/24
+            private:
+              - 10.17.2.0/24
+              - 10.17.3.0/24
+        availability_zones: ["us-east-1a", "us-east-1c"]
+    s3:
+      vars:
+        name: "s3"
+    iam:
+      vars:
+        name: "iam"
+    athena:
+      vars:
+        name: "athena"

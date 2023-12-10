@@ -1,0 +1,6 @@
+components:
+  terraform:
+    vpc:
+      vars:
+        enable_dns_support: true
+        enable_dns_hostnames: true
