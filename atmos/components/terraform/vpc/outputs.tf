@@ -22,3 +22,8 @@ output "athena_sg_id" {
   description = "ID of the athena security group"
   value       = aws_security_group.athena_sg.id
 }
+
+output "vpc_cidr_block" {
+  description = "CIDR block of vpc"
+  value       = module.vpc.vpc_cidr_block
+}

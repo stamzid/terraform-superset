@@ -7,7 +7,6 @@ data "terraform_remote_state" "s3" {
   }
 }
 
-
 data "terraform_remote_state" "vpc" {
   backend = "s3"
   config = {

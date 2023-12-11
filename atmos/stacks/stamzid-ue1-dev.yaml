@@ -19,6 +19,7 @@ components:
               - 10.17.2.0/24
               - 10.17.3.0/24
         availability_zones: ["us-east-1a", "us-east-1c"]
+        map_public_ip_on_launch: true
     s3:
       vars:
         name: "s3"
@@ -28,3 +29,10 @@ components:
     athena:
       vars:
         name: "athena"
+    eks:
+      vars:
+        instance_types: ["t3a.small"]
+        desired_size: 2
+        min_size: 1
+        max_size: 3
+        cluster_version: "1.28"
