@@ -61,6 +61,15 @@ This will build and push the image to ecr repor created with terraform.
 ### Route53
 `AWS_PROFILE=<profile_name> atmos terraform apply route53 -s stamzid-ue1-dev`
 
+## Superset Setup
+
+Once you login to superset with provided admin username and password, go through adding a new database addition flow from settings and generate the following url with proper values as `SQLALCHEMY_URI`
+
+```
+awsathena+rest://{aws_access_key_id}:{aws_secret_access_key}@athena.{region_name}.amazonaws.com/{schema_name}?s3_staging_dir={s3_staging_dir}&...
+```
+Schema name can be found from athena module outpute, it's the value of this `glue_catalog_database_name`. The rest you should have access to generate a URL encoded URI. Once it's configured on dashboard we can start querying.
+
 ## Notes
 Ensure that each component is successfully applied before proceeding to the next one. Use the domain you generated as part of route53 run to access superset dashboard.
 Verify that your AWS profile is correctly set up and has the necessary permissions to execute these commands.
