@@ -66,39 +66,17 @@ variable "regex_replace_chars" {
   default     = "/[^a-zA-Z0-9-]/"
 }
 
-variable "cluster_version" {
-  description = "Kube cluster version"
+variable "superset_version" {
+  description = "Version of superset docker container"
   type        = string
 }
 
-variable "node_group_ami_type" {
-  description = "Node group ami type"
+variable "consul_version" {
+  description = "Version of consul docker container"
   type        = string
-  default     = "AL2_x86_64"
 }
 
-variable "instance_types" {
-  description = "Cluster instance types"
-  type        = list(string)
-}
-
-variable "max_size" {
-  description = "Cluster max size"
-  type        = number
-}
-
-variable "min_size" {
-  description = "Cluster min size"
-  type        = number
-}
-
-variable "desired_size" {
-  description = "Cluster desired size"
-  type        = number
-}
-
-variable "addon_ebs_csi_version" {
-  description = "EBS csi driver version"
+variable "redis_version" {
+  description = "Version of redis docker container"
   type        = string
-  default     = "v1.20.0-eksbuild.1"
 }

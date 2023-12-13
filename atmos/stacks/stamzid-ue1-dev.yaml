@@ -29,10 +29,18 @@ components:
     athena:
       vars:
         name: "athena"
-    eks:
+    network:
       vars:
-        instance_types: ["t3a.small"]
-        desired_size: 2
-        min_size: 1
-        max_size: 3
-        cluster_version: "1.28"
+        name: "network"
+        hosted_zone_id: "Z09511082Y0101OMDFUD9"
+    ecr:
+      vars:
+        name: "ecr"
+        services:
+          - superset
+    ecs:
+      vars:
+        name: "ecs"
+        consul_version: "latest"
+        superset_version: "dockerize"
+        redis_version: "latest"

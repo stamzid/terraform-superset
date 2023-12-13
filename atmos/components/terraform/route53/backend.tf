@@ -5,6 +5,6 @@ terraform {
     region               = "us-east-1"
     dynamodb_table       = "stamzid-tfstate-lock"
     encrypt              = true
-    workspace_key_prefix = "eks"
+    workspace_key_prefix = "route53"
   }
 }

@@ -12,3 +12,8 @@ output "superset_kms_key_id" {
   description = "KMS encryption key id"
   value       = aws_kms_key.bucket_encryption_key.id
 }
+
+output "superset_kms_key_arn" {
+  description = "KMS encryption key id"
+  value       = aws_kms_key.bucket_encryption_key.arn
+}

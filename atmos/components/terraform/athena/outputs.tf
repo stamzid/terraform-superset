@@ -1,5 +1,5 @@
-output "athena_database_name" {
-  value = aws_athena_database.superset_database.name
+output "glue_catalog_database_name" {
+  value = aws_glue_catalog_database.superset_database.name
   description = "The name of the Athena database"
 }
 

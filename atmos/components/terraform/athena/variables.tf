@@ -28,7 +28,7 @@ variable "stage" {
 variable "name" {
   description = "Resource name"
   type        = string
-  default     = "athena"
+  default     = "s3"
 }
 
 variable "tenant" {
