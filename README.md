@@ -7,19 +7,18 @@ Before you begin, ensure you have the following:
 
 Atmos CLI installed.
 AWS CLI configured with the necessary permissions.
-A .secretenv file with the required environment variables set.
+A `.secretenv` file with the required environment variables set.
 Terraform installed.
 
 ## Secret File
 Create a .secretenv file in your `atmos` directory with the following content (replace placeholders with actual values):
 
+```
 TF_VAR_admin_username=<ADMIN_USERNAME>
-
 TF_VAR_admin_password=<ADMIN_PASSWORD>
-
 TF_VAR_superset_secret_key=<SUPERSET_SECRET_KEY>
-
 TF_VAR_hosted_zone_id=<HOSTED_ZONE_ID>
+```
 
 ## Component Execution Order
 All terraform commands must be run from `atmos` directory. It is the root terraform folder.
@@ -41,9 +40,11 @@ Then run each Terraform component in the following order:
 
 At this point, go to `superset` folder and export the following variables listed below:
 
+```
 AWS_ACCOUNT_ID=<your-aws-account-id>
 AWS_REGION=<your-aws-region>
 REPO_URL=<ECR repo url, this should be populated from the output of ECR terraform run>
+```
 
 Once the export is complete, simply run the bash file: `AWS_PROFILE=<profile_name> ./docker-build-push.sh`
 This will build and push the image to ecr repor created with terraform.
