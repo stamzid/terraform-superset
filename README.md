@@ -14,8 +14,11 @@ Terraform installed.
 Create a .secretenv file in your `atmos` directory with the following content (replace placeholders with actual values):
 
 TF_VAR_admin_username=<ADMIN_USERNAME>
+
 TF_VAR_admin_password=<ADMIN_PASSWORD>
+
 TF_VAR_superset_secret_key=<SUPERSET_SECRET_KEY>
+
 TF_VAR_hosted_zone_id=<HOSTED_ZONE_ID>
 
 ## Component Execution Order
