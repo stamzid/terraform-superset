@@ -58,10 +58,103 @@ resource "aws_security_group" "athena_sg" {
 
 resource "aws_security_group_rule" "athena_sg_rule" {
   type        = "ingress"
-  from_port   = 444
-  to_port     = 444
+  from_port   = 443
+  to_port     = 443
   protocol    = "tcp"
   cidr_blocks = [var.cidr_block]
 
   security_group_id = aws_security_group.athena_sg.id
+}
+
+resource "aws_security_group" "alb_sg" {
+  name        = "${var.tenant}-${var.environment}-${var.stage}-alb-sg"
+  description = "Security group for ALB to allow HTTPS traffic"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "alb-security-group"
+  }
+}
+
+resource "aws_security_group" "ecs_sg" {
+  name        = "${var.tenant}-${var.environment}-${var.stage}-ecs-sg"
+  description = "Security group for ECS services allowing traffic from ALB"
+  vpc_id      = module.vpc.vpc_id
+
+  # Allow inbound traffic from ALB on Superset port
+  ingress {
+    from_port   = 8088
+    to_port     = 8088
+    protocol    = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
+  }
+
+  # Allow inbound traffic from ALB on Consul port
+  ingress {
+    from_port   = 8500
+    to_port     = 8500
+    protocol    = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self        = true
+  }
+  # Typical egress rule to allow all outbound traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.tenant}-${var.environment}-${var.stage}-ecs-sg"
+  }
+}
+
+resource "aws_vpc_endpoint" "ecs" {
+  vpc_id             = module.vpc.vpc_id
+  service_name       = "com.amazonaws.${var.region}.ecs"
+  vpc_endpoint_type  = "Interface"
+
+  subnet_ids         = module.subnets.private_subnet_ids
+  security_group_ids = [aws_security_group.ecs_sg.id]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "ecs_agent" {
+  vpc_id             = module.vpc.vpc_id
+  service_name       = "com.amazonaws.${var.region}.ecs-agent"
+  vpc_endpoint_type  = "Interface"
+  subnet_ids         = module.subnets.private_subnet_ids
+  security_group_ids = [aws_security_group.ecs_sg.id]
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "ecs_telemetry" {
+  vpc_id             = module.vpc.vpc_id
+  service_name       = "com.amazonaws.${var.region}.ecs-telemetry"
+  vpc_endpoint_type  = "Interface"
+  subnet_ids         = module.subnets.private_subnet_ids
+  security_group_ids = [aws_security_group.ecs_sg.id]
+  private_dns_enabled = true
 }

@@ -66,11 +66,6 @@ variable "regex_replace_chars" {
   default     = "/[^a-zA-Z0-9-]/"
 }
 
-variable "superset_version" {
-  description = "Version of superset docker container"
-  type        = string
-}
-
 variable "consul_version" {
   description = "Version of consul docker container"
   type        = string
@@ -78,5 +73,30 @@ variable "consul_version" {
 
 variable "redis_version" {
   description = "Version of redis docker container"
+  type        = string
+}
+
+variable "aws_access" {
+  description = "Athena IAM Access Key"
+  type        = string
+}
+
+variable "aws_secret" {
+  description = "Athena IAM Secret"
+  type        = string
+}
+
+variable "admin_username" {
+  description = "Admin username for superset webapp"
+  type        = string
+}
+
+variable "admin_password" {
+  description = "Admin password for superset webapp"
+  type        = string
+}
+
+variable "superset_secret_key" {
+  description = "Superset secret openssl key"
   type        = string
 }

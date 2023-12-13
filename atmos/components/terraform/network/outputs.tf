@@ -1,9 +1,5 @@
-output "certificate_arn" {
-  value = aws_acm_certificate.wildcard_cert.arn
-}
-
-output "alb_sg_id" {
-  value = aws_security_group.alb_sg.id
+output "superset_certificate_arn" {
+  value = aws_acm_certificate.superset_cert.arn
 }
 
 output "alb_dns" {

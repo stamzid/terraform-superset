@@ -32,7 +32,6 @@ components:
     network:
       vars:
         name: "network"
-        hosted_zone_id: "Z09511082Y0101OMDFUD9"
     ecr:
       vars:
         name: "ecr"
@@ -42,5 +41,7 @@ components:
       vars:
         name: "ecs"
         consul_version: "latest"
-        superset_version: "dockerize"
         redis_version: "latest"
+    route53:
+      vars:
+        name: "route53"

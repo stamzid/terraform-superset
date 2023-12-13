@@ -27,3 +27,13 @@ output "vpc_cidr_block" {
   description = "CIDR block of vpc"
   value       = module.vpc.vpc_cidr_block
 }
+
+output "ecs_sg_id" {
+  description = "ID of the ecs security group"
+  value       = aws_security_group.ecs_sg.id
+}
+
+output "alb_sg_id" {
+  description = "ID of the alb security group"
+  value       = aws_security_group.alb_sg.id
+}

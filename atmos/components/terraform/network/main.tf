@@ -7,7 +7,7 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
-resource "aws_acm_certificate" "wildcard_cert" {
+resource "aws_acm_certificate" "superset_cert" {
   domain_name       = "${var.stage}.superset.stamzid.com"
   validation_method = "DNS"
 
@@ -16,48 +16,24 @@ resource "aws_acm_certificate" "wildcard_cert" {
   }
 }
 
-resource "aws_route53_record" "wildcard_cert_record" {
-  name    = tolist(aws_acm_certificate.wildcard_cert.domain_validation_options)[0].resource_record_name
-  type    = tolist(aws_acm_certificate.wildcard_cert.domain_validation_options)[0].resource_record_type
+resource "aws_route53_record" "superset_cert_record" {
+  name    = tolist(aws_acm_certificate.superset_cert.domain_validation_options)[0].resource_record_name
+  type    = tolist(aws_acm_certificate.superset_cert.domain_validation_options)[0].resource_record_type
   zone_id = var.hosted_zone_id
-  records = [tolist(aws_acm_certificate.wildcard_cert.domain_validation_options)[0].resource_record_value]
+  records = [tolist(aws_acm_certificate.superset_cert.domain_validation_options)[0].resource_record_value]
   ttl     = 60
 }
 
-resource "aws_acm_certificate_validation" "wildcard_cert_validation" {
-  certificate_arn         = aws_acm_certificate.wildcard_cert.arn
-  validation_record_fqdns = [aws_route53_record.wildcard_cert_record.fqdn]
-}
-
-resource "aws_security_group" "alb_sg" {
-  name        = "${var.tenant}-${var.environment}-${var.stage}-alb-sg"
-  description = "Security group for ALB to allow HTTPS traffic"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "alb-security-group"
-  }
+resource "aws_acm_certificate_validation" "superset_cert_validation" {
+  certificate_arn         = aws_acm_certificate.superset_cert.arn
+  validation_record_fqdns = [aws_route53_record.superset_cert_record.fqdn]
 }
 
 resource "aws_lb" "app_lb" {
   name               = "${var.tenant}-${var.environment}-${var.stage}-app-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_sg.id]
+  security_groups    = [data.terraform_remote_state.vpc.outputs.alb_sg_id]
   subnets            = data.terraform_remote_state.vpc.outputs.public_subnet_ids
 
   enable_deletion_protection = false
@@ -73,14 +49,16 @@ resource "aws_lb_target_group" "superset_tg" {
   protocol = "HTTP"
   vpc_id   = data.terraform_remote_state.vpc.outputs.vpc_id
 
+  target_type = "ip"
+
   health_check {
     protocol            = "HTTP"
     path                = "/"
     healthy_threshold   = 3
     unhealthy_threshold = 3
-    timeout             = 30
+    timeout             = 5
     interval            = 60
-    matcher             = "200"
+    matcher             = "200,302,308"
   }
 
   tags = {
@@ -93,12 +71,12 @@ resource "aws_lb_listener" "https_superset_listener" {
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  certificate_arn   = aws_acm_certificate.wildcard_cert.arn
+  certificate_arn   = aws_acm_certificate.superset_cert.arn
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.superset_tg.arn
   }
 
-  depends_on = [aws_acm_certificate_validation.wildcard_cert_validation]
+  depends_on = [aws_acm_certificate_validation.superset_cert_validation]
 }

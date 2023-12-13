@@ -36,6 +36,6 @@ resource "aws_ecr_lifecycle_policy" "this" {
   policy     = jsonencode(local.lifecycle_policy)
 }
 
-output "repository_url" {
-  value = aws_ecr_repository.this[*].repository_url
+output "service_repository_urls" {
+  value = zipmap(var.services, aws_ecr_repository.this[*].repository_url)
 }
